@@ -1,4 +1,4 @@
-const Member = require('../member-schema.js');
+const Member = require('../schemas/member-schema.js');
 
 module.exports = {
     addUser: async function (user, level, balance) {
@@ -6,7 +6,8 @@ module.exports = {
             _id: user.id,
             username: user.username,
             level: level,
-            balance: balance
+            balance: balance,
+            achievements: []
         });
 
         await userToAdd.save().catch(console.error);

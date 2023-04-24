@@ -1,4 +1,5 @@
-const Member = require('../member-schema.js');
+const Member = require('../schemas/member-schema.js');
+const { Achievement } = require('../schemas/achievement-schema.js');
 
 module.exports = {
     rtAccrue: async function (user, currency) {
@@ -54,5 +55,18 @@ module.exports = {
         await member.save();
 
         return member.balance;
+    },
+    addAchievement: async function (user, achievementIndex) {
+        const member = await Member.findOne({ _id: user.id });
+        const achievement = await Achievement.findOne({ number: achievementIndex });
+
+        try {
+            member.achievements.push(achievement);
+            await member.save();
+        } catch (error) {
+            console.log(error);
+        }
+
+        return member.achievements[member.achievements.length - 1].name;
     },
 }

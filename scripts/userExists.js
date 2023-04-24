@@ -1,4 +1,4 @@
-const Member = require('../member-schema.js');
+const Member = require('../schemas/member-schema.js');
 
 module.exports = {
     userExists: async function (user) {
