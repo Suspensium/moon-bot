@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { addAchievement } = require('../../scripts/accrue.js');
 const { userExists } = require('../../scripts/userExists.js');
-const { achievementExists } = require('../../scripts/achievementExists.js');
+const { achievementExists, userHasAchievement } = require('../../scripts/achievementExists.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -26,6 +26,10 @@ module.exports = {
         }
         if (!(await achievementExists(achievementIndex))) {
             await interaction.reply(`Достижение не найдено в базе данных.`);
+            return;
+        }
+        if (await userHasAchievement(user, achievementIndex)) {
+            await interaction.reply(`У пользователя ${user.toString()} уже есть данное достижение.`);
             return;
         }
 
