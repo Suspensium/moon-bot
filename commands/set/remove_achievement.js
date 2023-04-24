@@ -1,12 +1,12 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { addAchievement } = require('../../scripts/accrue.js');
+const { removeAchievement } = require('../../scripts/accrue.js');
 const { userExists } = require('../../scripts/userExists.js');
-const { achievementExists } = require('../../scripts/achievementExists.js');
+const { achievementExists, userHasAchievement } = require('../../scripts/achievementExists.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('add_achievement')
-        .setDescription("Adds achievement to a user")
+        .setName('remove_achievement')
+        .setDescription("Removes achievement from a user")
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addUserOption(option =>
             option.setName('user')
@@ -14,7 +14,7 @@ module.exports = {
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('achievement_index')
-                .setDescription('Index of the achievement to add')
+                .setDescription('Index of the achievement to remove')
                 .setRequired(true)),
     async execute(interaction) {
         const user = interaction.options.getUser('user');
@@ -28,7 +28,11 @@ module.exports = {
             await interaction.reply(`Достижение не найдено в базе данных.`);
             return;
         }
+        if (!(await userHasAchievement(user, achievementIndex))) {
+            await interaction.reply(`У пользователя ${user.toString()} нет данного достижения.`);
+            return;
+        }
 
-        await interaction.reply(`Пользователю ${user.toString()} было засчитано достижение "${await addAchievement(user, achievementIndex)}".`);
+        await interaction.reply(`Достижение "${await removeAchievement(user, achievementIndex)}" было удалено у пользователя ${user.toString()}.`);
     },
 };

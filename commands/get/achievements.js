@@ -24,7 +24,7 @@ module.exports = {
             .setTitle(user.username);
 
         for (let i = 0; i < (await achievements).length; i++) {
-            achievementsCard.addFields({ name: `${achievements[i].name}`, value: `${achievements[i].description}` })
+            achievementsCard.addFields({ name: `${achievements[i].number}. ${achievements[i].name}`, value: `${achievements[i].description}` })
         }
 
         await interaction.reply({ embeds: [achievementsCard] });

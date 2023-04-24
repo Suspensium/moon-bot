@@ -69,4 +69,17 @@ module.exports = {
 
         return member.achievements[member.achievements.length - 1].name;
     },
+    removeAchievement: async function (user, achievementIndex) {
+        const member = await Member.findOne({ _id: user.id });
+        const achievement = await Achievement.findOne({ number: achievementIndex });
+
+        try {
+            member.achievements.pull(achievement);
+            await member.save();
+        } catch (error) {
+            console.log(error);
+        }
+
+        return achievement.name;
+    },
 }
