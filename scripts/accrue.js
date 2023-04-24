@@ -1,43 +1,58 @@
+const Member = require('../member-schema.js');
+
 module.exports = {
     rtAccrue: async function (user, currency) {
+        const member = await Member.findOne({ _id: user.id });
+
         let coef = 1.;
-        if (userInfo[user.id].level >= 10 && userInfo[user.id].level < 20)
+        if (member.level >= 10 && member.level < 20)
             coef = 1.25;
-        else if (userInfo[user.id].level >= 20)
+        else if (member.level >= 20)
             coef = 1.5;
 
-        if (currency < 0) coef = 1.;
+        member.balance += Math.round(currency * coef);
+        await member.save();
 
-        userInfo[user.id].balance += currency * coef;
-
-        return (currency * coef);
+        return Math.round(currency * coef);
     },
     setLevel: async function (user, level) {
-        userInfo[user.id].level = level;
+        const member = await Member.findOne({ _id: user.id });
 
-        return userInfo[user.id].level;
+        member.level = level;
+        await member.save();
+
+        return member.level;
     },
     setBalance: async function (user, balance) {
-        userInfo[user.id].balance = balance;
+        const member = await Member.findOne({ _id: user.id });
 
-        return userInfo[user.id].balance;
+        member.balance = balance;
+        await member.save();
+
+        return member.balance;
     },
     addLevel: async function (user, level) {
-        userInfo[user.id].level += level;
+        const member = await Member.findOne({ _id: user.id });
 
-        return userInfo[user.id].level;
+        member.level += level;
+        await member.save();
+
+        return member.level;
     },
     addBalance: async function (user, currency) {
+        const member = await Member.findOne({ _id: user.id });
+
         let coef = 1.;
-        if (userInfo[user.id].level >= 10 && userInfo[user.id].level < 20)
+        if (member.level >= 10 && member.level < 20)
             coef = 1.25;
-        else if (userInfo[user.id].level >= 20)
+        else if (member.level >= 20)
             coef = 1.5;
 
         if (currency < 0) coef = 1.;
 
-        userInfo[user.id].balance += currency * coef;
+        member.balance += Math.round(currency * coef);
+        await member.save();
 
-        return (currency * coef);
+        return member.balance;
     },
 }

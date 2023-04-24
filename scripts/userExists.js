@@ -1,5 +1,8 @@
+const Member = require('../member-schema.js');
+
 module.exports = {
     userExists: async function (user) {
-        return userInfo[user.id] ? true : false;
+        const searchedUser = Member.findOne({ _id: user.id });
+        return (await searchedUser ? true : false);
     }
 };

@@ -38,6 +38,7 @@ module.exports = {
                 if (userClickedButton.has(interaction.user.id)) {
                     return interaction.reply({ content: 'Ты уже отметился.', ephemeral: true });
                 }
+
                 userClickedButton.add(interaction.user.id);
                 await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${await rtAccrue(interaction.user, interaction.message.content)} мункойнов.`);
             }

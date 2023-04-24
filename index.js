@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const { database } = require('./config.json');
+const mongoose = require('mongoose');
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
-global.userInfo = {};
-
 client.commands = new Collection();
 
 // initialize commands
@@ -40,10 +40,14 @@ for (const file of eventFiles) {
     }
 }
 
-// initialize users data
-try {
-    userInfo = require('./user-info.json');
-} catch (err) {
-    console.error(err);
-}
-client.login(token);
+// database connection
+mongoose.connect(database, { keepAlive: true })
+    .then(() => {
+        console.log('MongoDB connected');
+    })
+    .then(() => {
+        return client.login(token);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
