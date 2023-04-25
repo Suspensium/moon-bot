@@ -43,11 +43,11 @@ module.exports = {
         return Math.round(currency * coef);
     },
     addAchievement: async function (user, achievementIndex) {
-        const member = await Member.findOne({ _id: user.id });
-        const achievement = await Achievement.findOne({ number: achievementIndex });
+        const member = Member.findOne({ _id: user.id });
+        const achievement = Achievement.findOne({ number: achievementIndex });
 
         try {
-            member.achievements.push(achievement);
+            await member.achievements.push(await achievement);
             await member.save();
         } catch (error) {
             console.log(error);
