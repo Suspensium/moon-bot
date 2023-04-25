@@ -1,6 +1,7 @@
 const { Events } = require('discord.js');
 const { rtAccrue } = require('../scripts/accrue.js');
 const { userExists } = require('../scripts/userExists.js');
+const { addUser } = require('../scripts/addUser.js');
 
 let messageButtonMap = new Map();
 
@@ -23,7 +24,7 @@ module.exports = {
         }
 
         if (interaction.isButton()) {
-            if (interaction.customId = 'accrue') {
+            if (interaction.customId === 'accrue') {
                 if (!(await userExists(interaction.user))) {
                     await interaction.reply(`Пользователь ${interaction.user.toString()} не найден в базе данных.`);
                     return;
@@ -41,6 +42,16 @@ module.exports = {
 
                 userClickedButton.add(interaction.user.id);
                 await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${await rtAccrue(interaction.user, interaction.message.content)} мункойнов.`);
+                return;
+            }
+            if (interaction.customId === 'register') {
+                if (await userExists(interaction.user)) {
+                    await interaction.reply({ content: `Ты уже зарегистрирован.`, ephemeral: true });
+                    return;
+                }
+                addUser(interaction.user, 1, 0);
+                await interaction.reply({ content: `Ты успешно зарегистрировался.`, ephemeral: true });
+                return;
             }
         }
     },
