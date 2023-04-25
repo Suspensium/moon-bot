@@ -4,8 +4,8 @@ const { buildEmbed } = require('../../scripts/leaderboardEmbed.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('leaderboard')
-        .setDescription('Outputs a list of current leaders'),
+        .setName('shop')
+        .setDescription('Outputs a shop'),
     async execute(interaction) {
         const valueSelector = new StringSelectMenuBuilder()
             .setCustomId('leaderboardCriteria')
@@ -27,7 +27,7 @@ module.exports = {
 
         const members = await getAllUsers();
         members.sort((a, b) => b.balance - a.balance);
-        let topTen = members.slice(0, 25);
+        let topTen = members.slice(0, 10);
         let infoCard = await buildEmbed(topTen, 'Balance');
 
         const sentMessage = await interaction.reply({ embeds: [infoCard], components: [row] });
@@ -50,7 +50,7 @@ module.exports = {
                     break;
             }
 
-            topTen = members.slice(0, 25);
+            topTen = members.slice(0, 10);
             infoCard = await buildEmbed(topTen, selectedValue);
             await interaction.update({ embeds: [infoCard] });
         });

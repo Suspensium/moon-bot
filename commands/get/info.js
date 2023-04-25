@@ -23,6 +23,7 @@ module.exports = {
         const infoCard = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle(user.username)
+            .setThumbnail(user.avatarURL())
             .addFields(
                 { name: 'Level', value: `${await level}`, inline: true },
                 { name: 'Balance', value: `${await balance}`, inline: true },

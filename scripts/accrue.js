@@ -2,20 +2,6 @@ const Member = require('../schemas/member-schema.js');
 const { Achievement } = require('../schemas/achievement-schema.js');
 
 module.exports = {
-    rtAccrue: async function (user, currency) {
-        const member = await Member.findOne({ _id: user.id });
-
-        let coef = 1.;
-        if (member.level >= 10 && member.level < 20)
-            coef = 1.25;
-        else if (member.level >= 20)
-            coef = 1.5;
-
-        member.balance += Math.round(currency * coef);
-        await member.save();
-
-        return Math.round(currency * coef);
-    },
     setLevel: async function (user, level) {
         const member = await Member.findOne({ _id: user.id });
 
@@ -54,7 +40,7 @@ module.exports = {
         member.balance += Math.round(currency * coef);
         await member.save();
 
-        return member.balance;
+        return Math.round(currency * coef);
     },
     addAchievement: async function (user, achievementIndex) {
         const member = await Member.findOne({ _id: user.id });

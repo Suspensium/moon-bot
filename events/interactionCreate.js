@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
-const { rtAccrue } = require('../scripts/accrue.js');
+const { addBalance } = require('../scripts/accrue.js');
+const { getLevel } = require('../scripts/getInfo.js');
 const { userExists } = require('../scripts/userExists.js');
 const { addUser } = require('../scripts/addUser.js');
 
@@ -41,7 +42,12 @@ module.exports = {
                 }
 
                 userClickedButton.add(interaction.user.id);
-                await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${await rtAccrue(interaction.user, interaction.message.content)} мункойнов.`);
+                const level = await getLevel(interaction.user);
+                let coef = '1';
+                if (level >= 10 && level < 20) coef = '1.25'; else if (level > 20) coef = '1.5';
+
+                await addBalance(interaction.user, interaction.message.content);
+                await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${interaction.message.content} x ${coef} мункойнов.`);
                 return;
             }
             if (interaction.customId === 'register') {

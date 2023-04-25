@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { addBalance } = require('../../scripts/accrue.js');
+const { getBalance } = require('../../scripts/getInfo.js');
 const { userExists } = require('../../scripts/userExists.js');
 
 module.exports = {
@@ -23,6 +24,7 @@ module.exports = {
             await interaction.reply(`Пользователь ${user.toString()} не найден в базе данных.`);
             return;
         }
-        await interaction.reply(`Баланс ${user.toString()} был изменен на ${currency}. Новый баланс с учётом коэффициента: ${await addBalance(user, currency)}.`);
+        await addBalance(user, currency);
+        await interaction.reply(`Баланс ${user.toString()} был изменен на ${currency}. Новый баланс с учётом коэффициента: ${await getBalance(user)}.`);
     },
 };

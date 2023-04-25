@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { setBalance } = require('../../scripts/accrue.js');
+const { getBalance } = require('../../scripts/getInfo.js');
 const { userExists } = require('../../scripts/userExists.js');
 
 module.exports = {
@@ -23,6 +24,6 @@ module.exports = {
             await interaction.reply(`Пользователь ${user.toString()} не найден в базе данных.`);
             return;
         }
-        await interaction.reply(`Баланс ${user.toString()} был установлен на ${await setBalance(user, balance)}.`);
+        await interaction.reply(`Баланс ${user.toString()} был установлен с ${await getBalance(user)} на ${await setBalance(user, balance)}.`);
     },
 };

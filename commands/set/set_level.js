@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { setLevel } = require('../../scripts/accrue.js');
+const { getLevel } = require('../../scripts/getInfo.js');
 const { userExists } = require('../../scripts/userExists.js');
 
 module.exports = {
@@ -24,6 +25,6 @@ module.exports = {
             return;
         }
 
-        await interaction.reply(`Уровень ${user.toString()} был установлен на ${await setLevel(user, level)}.`);
+        await interaction.reply(`Уровень ${user.toString()} был установлен с ${await getLevel(user)} на ${await setLevel(user, level)}.`);
     },
 };
