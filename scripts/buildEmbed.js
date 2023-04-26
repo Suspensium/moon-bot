@@ -1,7 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
+const { getBalance } = require('./getInfo.js');
 
 module.exports = {
-    buildEmbed: async function (users, criteria) {
+    buildLeaderboardEmbed: async function (users, criteria) {
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setThumbnail(botAvatar)
@@ -26,6 +27,21 @@ module.exports = {
             default:
                 break;
         }
+
+        return embed;
+    },
+    buildShopEmbed: async function (user, item) {
+        const balance = await getBalance(user);
+        const color = (balance < item.price) ? '#ff0000' : '#00ff00';
+        const embed = new EmbedBuilder()
+            .setColor(0x0099FF)
+            .setThumbnail(item.icon)
+            .setTitle(`Магазин`)
+            .setDescription(`Баланс ${user.username} - ${balance}`)
+            .addFields({ name: `Название`, value: `${item.name}` })
+            .addFields({ name: `Описание`, value: `${item.description}` })
+            .addFields({ name: `Цена`, value: `${item.price}` })
+            .setColor(color);
 
         return embed;
     }

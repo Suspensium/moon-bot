@@ -1,6 +1,6 @@
 const { ActionRowBuilder, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } = require('discord.js');
 const { getAllUsers } = require('../../scripts/getInfo.js');
-const { buildEmbed } = require('../../scripts/leaderboardEmbed.js');
+const { buildLeaderboardEmbed } = require('../../scripts/buildEmbed.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -27,8 +27,8 @@ module.exports = {
 
         const members = await getAllUsers();
         members.sort((a, b) => b.balance - a.balance);
-        let topTen = members.slice(0, 25);
-        let infoCard = await buildEmbed(topTen, 'Balance');
+        let top = members.slice(0, 25);
+        let infoCard = await buildLeaderboardEmbed(top, 'Balance');
 
         const sentMessage = await interaction.reply({ embeds: [infoCard], components: [row] });
 
@@ -49,9 +49,8 @@ module.exports = {
                 default:
                     break;
             }
-
-            topTen = members.slice(0, 25);
-            infoCard = await buildEmbed(topTen, selectedValue);
+            top = members.slice(0, 25);
+            infoCard = await buildLeaderboardEmbed(top, selectedValue);
             await interaction.update({ embeds: [infoCard] });
         });
     },

@@ -1,4 +1,5 @@
 const { achievementSchema } = require('./achievement-schema.js');
+const { itemSchema } = require('./item-schema.js');
 const { Schema, model } = require('mongoose');
 
 const memberSchema = new Schema({
@@ -6,7 +7,8 @@ const memberSchema = new Schema({
     username: String,
     level: Number,
     balance: Number,
-    achievements: [achievementSchema]
+    achievements: [achievementSchema],
+    inventory: [itemSchema]
 });
 
 module.exports = model('Member', memberSchema);

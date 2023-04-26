@@ -1,5 +1,6 @@
 const Member = require('../schemas/member-schema.js');
 const { Achievement } = require('../schemas/achievement-schema.js');
+const { Item } = require('../schemas/item-schema.js');
 
 module.exports = {
     setLevel: async function (user, level) {
@@ -43,11 +44,11 @@ module.exports = {
         return Math.round(currency * coef);
     },
     addAchievement: async function (user, achievementIndex) {
-        const member = Member.findOne({ _id: user.id });
-        const achievement = Achievement.findOne({ number: achievementIndex });
+        const member = await Member.findOne({ _id: user.id });
+        const achievement = await Achievement.findOne({ number: achievementIndex });
 
         try {
-            await member.achievements.push(await achievement);
+            member.achievements.push(achievement);
             await member.save();
         } catch (error) {
             console.log(error);
@@ -67,5 +68,31 @@ module.exports = {
         }
 
         return achievement.name;
+    },
+    addItem: async function (user, itemName) {
+        const member = await Member.findOne({ _id: user.id });
+        const item = await Item.findOne({ name: itemName });
+
+        try {
+            member.inventory.push(item);
+            await member.save();
+        } catch (error) {
+            console.log(error);
+        }
+
+        return item.name;
+    },
+    removeItem: async function (user, itemName) {
+        const member = await Member.findOne({ _id: user.id });
+        const item = await Item.findOne({ name: itemName });
+
+        try {
+            member.inventory.pull(item);
+            await member.save();
+        } catch (error) {
+            console.log(error);
+        }
+
+        return item.name;
     },
 }
