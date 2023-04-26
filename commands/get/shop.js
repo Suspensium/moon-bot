@@ -1,6 +1,6 @@
 const { ActionRowBuilder, SlashCommandBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { getShopItems, getBalance } = require('../../scripts/getInfo.js');
-const { addBalance, addItem } = require('../../scripts/accrue.js');
+const { getShopItems, getBalance, getLevel, getTokenLevelUps } = require('../../scripts/getInfo.js');
+const { addBalance, addLevel, addItem, removeItem, addTokenLevelUps } = require('../../scripts/accrue.js');
 const { userExists } = require('../../scripts/userExists.js');
 const { buildShopEmbed } = require('../../scripts/buildEmbed.js');
 
@@ -62,6 +62,10 @@ module.exports = {
             if (manipInteraction.customId === 'shop_prev') index--;
             else if (manipInteraction.customId === 'shop_next') index++;
             else {
+                if (items[index].name === "Жетон выслуги" && (await getTokenLevelUps(user) >= 5)) {
+                    await manipInteraction.reply({ content: `Вы уже повысили уровень 5 раз.`, ephemeral: true });
+                    return;
+                }
                 const confirmMessage = await manipInteraction.channel.send({ content: `Вы уверены, что хотите купить "${items[index].name}"?`, components: [confirmRow] });
                 const filter = (manipInteraction) =>
                     manipInteraction.customId === 'shop_confirm' ||
@@ -74,14 +78,19 @@ module.exports = {
                     }
                     if (confirmInteraction.customId === 'shop_cancel') await confirmMessage.delete();
                     else {
+                        addBalance(user, items[index].price * (-1)).then(addItem(user, items[index].name)).then(async () => {
+                            await confirmInteraction.channel.send(`Пользователь ${user.toString()} приобрел предмет "${items[index].name}" за ${items[index].price} мункойнов.`);
+                        });
                         try {
-                            addBalance(user, items[index].price * (-1)).then(addItem(user, items[index].name)).then(async () => { await confirmInteraction.channel.send(`Пользователь ${user.toString()} приобрел предмет "${items[index].name}" за ${items[index].price} мункойнов.`) });
                             await confirmMessage.delete();
                             await sentMessage.delete();
-                            return;
-                        } catch (error) {
-                            console.error(error)
+                        } catch (error) { console.error(error) };
+                        if (items[index].name === "Жетон выслуги") {
+                            addTokenLevelUps(user).then(removeItem(user, items[index].name).then(async () => {
+                                await interaction.channel.send(`Пользователь ${user.toString()} повышает свой уровень с ${await getLevel(user)} до ${await addLevel(user, 1)}.`);
+                            }));
                         }
+                        return;
                     }
                 });
             }

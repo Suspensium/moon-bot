@@ -27,6 +27,19 @@ module.exports = {
 
         return member.level;
     },
+    addTokenLevelUps: async function (user) {
+        const member = await Member.findOne({ _id: user.id });
+
+        try {
+            if (member.levelUps) member.levelUps++;
+            else member.levelUps = 1;
+            await member.save();
+        } catch (error) {
+            console.error(error);
+        }
+
+        return member.levelUps;
+    },
     addBalance: async function (user, currency) {
         const member = await Member.findOne({ _id: user.id });
 

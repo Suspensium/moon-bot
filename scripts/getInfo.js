@@ -26,4 +26,8 @@ module.exports = {
         const member = await Member.findOne({ _id: user.id }, { achievements: 1 });
         return member.achievements;
     },
+    getTokenLevelUps: async function (user) {
+        const member = await Member.findOne({ _id: user.id }, { levelUps: 1 });
+        return member.levelUps ?? 0;
+    },
 }
