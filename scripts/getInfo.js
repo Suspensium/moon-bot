@@ -2,6 +2,10 @@ const Member = require('../schemas/member-schema.js');
 const { Item } = require('../schemas/item-schema.js');
 
 module.exports = {
+    getUser: async function (id) {
+        const user = await Member.findOne({ _id: id });
+        return user;
+    },
     getAllUsers: async function () {
         const users = await Member.find();
         return users;

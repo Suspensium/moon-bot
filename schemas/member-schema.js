@@ -9,7 +9,8 @@ const memberSchema = new Schema({
     balance: Number,
     achievements: [achievementSchema],
     inventory: [itemSchema],
-    levelUps: Number
+    levelUps: Number,
+    lastDaily: Date
 });
 
 module.exports = model('Member', memberSchema);

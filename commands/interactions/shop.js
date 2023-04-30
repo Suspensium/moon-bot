@@ -49,6 +49,7 @@ module.exports = {
         let embed = await buildShopEmbed(user, items[index]);
 
         const sentMessage = await interaction.reply({ embeds: [embed], components: [manipRow] });
+        setTimeout(async () => await sentMessage.delete(), 120000);
         const filter = (interaction) =>
             interaction.customId === 'shop_prev' ||
             interaction.customId === 'shop_buy' ||
@@ -67,6 +68,7 @@ module.exports = {
                     return;
                 }
                 const confirmMessage = await manipInteraction.channel.send({ content: `Вы уверены, что хотите купить "${items[index].name}"?`, components: [confirmRow] });
+                setTimeout(async () => await confirmMessage.delete(), 120000);
                 const filter = (manipInteraction) =>
                     manipInteraction.customId === 'shop_confirm' ||
                     manipInteraction.customId === 'shop_cancel';

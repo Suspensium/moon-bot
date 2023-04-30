@@ -6,9 +6,10 @@ module.exports = {
     name: Events.GuildMemberRemove,
     async execute(member) {
         try {
+            console.log(member);
             if (userExists(member)) {
                 await removeUser(member);
-                console.log(`User ${member.usename} was deleted from database.`);
+                console.log(`User ${member.username} was deleted from database.`);
             }
         } catch (error) {
             console.error(error);
