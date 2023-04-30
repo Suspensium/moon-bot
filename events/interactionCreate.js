@@ -27,12 +27,12 @@ module.exports = {
         if (interaction.isButton()) {
             // daily
             if (interaction.customId === 'daily') {
+                const dailyAccrue = 20;
+
                 if (!(await userExists(interaction.user))) {
-                    await interaction.reply(`Пользователь ${interaction.user.toString()} не найден в базе данных.`);
-                    return;
+                    await addUser(interaction.user, 1, 0);
                 }
 
-                const dailyAccrue = 20;
                 const user = await getUser(interaction.user.id);
 
                 if (Date.now() - user.lastDaily < 86400000) {
@@ -48,7 +48,7 @@ module.exports = {
                 await user.save();
 
                 let coef = '1';
-                if (user.level >= 10 && user.level < 20) coef = '1.25'; else if (user.level > 20) coef = '1.5';
+                if (user.level >= 10 && user.level < 25) coef = '1.25'; else if (user.level > 25) coef = '1.5';
 
                 await addBalance(user, dailyAccrue);
                 await interaction.reply({ content: `Ты успешно отметился сегодня, получая ${dailyAccrue} x ${coef} мункойнов.`, ephemeral: true });
@@ -58,7 +58,7 @@ module.exports = {
             // accrue
             if (interaction.customId === 'accrue') {
                 if (!(await userExists(interaction.user))) {
-                    await interaction.reply({ content: `Тебя нет в базе данных, сначала зарегистрируйся.`, ephemeral: true });
+                    await addUser(interaction.user, 1, 0);
                     return;
                 }
 
@@ -76,7 +76,7 @@ module.exports = {
 
                 const level = await getLevel(interaction.user);
                 let coef = '1';
-                if (level >= 10 && level < 20) coef = '1.25'; else if (level > 20) coef = '1.5';
+                if (level >= 10 && level < 25) coef = '1.25'; else if (level > 25) coef = '1.5';
 
                 await addBalance(interaction.user, interaction.message.content);
                 await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${interaction.message.content} x ${coef} мункойнов.`);

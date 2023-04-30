@@ -44,9 +44,9 @@ module.exports = {
         const member = await Member.findOne({ _id: user.id });
 
         let coef = 1.;
-        if (member.level >= 10 && member.level < 20)
+        if (member.level >= 10 && member.level < 25)
             coef = 1.25;
-        else if (member.level >= 20)
+        else if (member.level >= 25)
             coef = 1.5;
 
         if (currency < 0) coef = 1.;
