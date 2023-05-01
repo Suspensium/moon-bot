@@ -39,8 +39,8 @@ module.exports = {
                     const diffInMinutes = Math.ceil((86400000 - (Date.now() - user.lastDaily)) / (1000 * 60));
                     const remainingHours = Math.floor(diffInMinutes / 60);
                     const remainingMinutes = diffInMinutes % 60;
-                    const remainingTime = `${remainingHours}:${remainingMinutes < 10 ? '0' : ''}${remainingMinutes}`;
-                    await interaction.reply({ content: `Ты уже отметился сегодня, времени до следующего ежедневного бонуса: ${remainingTime} часов.`, ephemeral: true });
+                    const remainingTime = `${remainingHours} часов ${remainingMinutes < 10 ? '0' : ''}${remainingMinutes} минут`;
+                    await interaction.reply({ content: `Ты уже отметился сегодня, времени до следующего ежедневного бонуса: ${remainingTime}.`, ephemeral: true });
                     return;
                 }
 
