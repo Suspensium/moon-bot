@@ -39,12 +39,11 @@ module.exports = {
 
                 const user = await getUser(interaction.user.id);
 
-                if (Date.now() - user.lastDaily < 86400000) {
-                    const diffInMinutes = Math.ceil((86400000 - (Date.now() - user.lastDaily)) / (1000 * 60));
-                    const remainingHours = Math.floor(diffInMinutes / 60);
-                    const remainingMinutes = diffInMinutes % 60;
-                    const remainingTime = `${remainingHours} часов ${remainingMinutes < 10 ? '0' : ''}${remainingMinutes} минут`;
-                    await interaction.reply({ content: `Ты уже отметился сегодня, времени до следующего ежедневного бонуса: ${remainingTime}.`, ephemeral: true });
+                const lastClaimedDate = new Date(user.lastDaily).toLocaleDateString();
+                const currentDate = new Date().toLocaleDateString();
+
+                if (lastClaimedDate === currentDate) {
+                    await interaction.reply({ content: 'Ты уже отмечался сегодня.', ephemeral: true });
                     return;
                 }
 
