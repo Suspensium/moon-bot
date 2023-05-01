@@ -63,7 +63,6 @@ module.exports = {
             if (interaction.customId === 'accrue') {
                 if (!(await userExists(interaction.user))) {
                     await addUser(interaction.user, 1, 0);
-                    return;
                 }
 
                 const clickedButton = await getButton(interaction.message.id);
