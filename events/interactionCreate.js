@@ -25,6 +25,10 @@ module.exports = {
         }
 
         if (interaction.isButton()) {
+            if (interaction.channel.locked) {
+                await interaction.reply({ content: 'Поток заблокирован.', ephemeral: true });
+                return;
+            }
             // daily
             if (interaction.customId === 'daily') {
                 const dailyAccrue = 20;
