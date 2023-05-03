@@ -1,0 +1,16 @@
+{
+  "name": "moon-bot",
+  "version": "1.0.0",
+  "description": "Currency helper for M O O N guild",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Drudanae",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.9.0",
+    "mongodb": "^5.3.0",
+    "mongoose": "^7.0.4"
+  }
+}
