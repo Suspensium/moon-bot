@@ -5,6 +5,8 @@ const { userExists } = require('../scripts/userExists.js');
 const { addButton, addUserToButton } = require('../scripts/addButton.js');
 const { getButton, getButtonUser } = require('../scripts/getButton.js');
 const { addUser } = require('../scripts/addUser.js');
+const moment = require('moment-timezone');
+moment.tz.setDefault('Europe/Moscow');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -39,15 +41,15 @@ module.exports = {
 
                 const user = await getUser(interaction.user.id);
 
-                const lastClaimedDate = new Date(user.lastDaily).toLocaleDateString();
-                const currentDate = new Date().toLocaleDateString();
+                const lastClaimedDate = moment(user.lastDaily).tz('Europe/Moscow').format('YYYY-MM-DD');
+                const currentDate = moment().tz('Europe/Moscow').format('YYYY-MM-DD');
 
                 if (lastClaimedDate === currentDate) {
                     await interaction.reply({ content: 'Ты уже отмечался сегодня.', ephemeral: true });
                     return;
                 }
 
-                user.lastDaily = Date.now();
+                user.lastDaily = moment().valueOf();
                 await user.save();
 
                 let coef = '1';
