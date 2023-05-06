@@ -20,8 +20,8 @@ module.exports = {
         const mentionedMembers = await interaction.guild.members.fetch({ user: mentionedUsersIds, cache: true });
         const mentionedUsers = mentionedMembers.map(member => member.user);
         let users = [];
+        const currency = interaction.options.getInteger('currency');
         try {
-            const currency = interaction.options.getInteger('currency');
             for (const user of mentionedUsers) {
                 if (!(await userExists(user))) {
                     await interaction.channel.send(`Пользователь ${user.toString()} не найден в базе данных.`);
