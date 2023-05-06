@@ -34,10 +34,8 @@ module.exports = {
             await interaction.reply(`Баланс ${users} был изменен на ${currency}.`);
         } catch (error) {
             if (error.code === 10008 || error.code === 10062) {
-                // Interaction timed out, retry after a delay
-                setTimeout(() => {
-                    interaction.reply(`Баланс ${users} был изменен на ${currency}.`);
-                }, 5000); // Retry after 5 seconds
+                // Interaction timed out
+                channel.send(`Баланс ${users} был изменен на ${currency}.`);
             } else {
                 console.error(error);
                 channel.send('Произошла ошибка при выполнении команды.');
