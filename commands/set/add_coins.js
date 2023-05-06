@@ -16,20 +16,21 @@ module.exports = {
                 .setDescription('The amount of currency to accrue')
                 .setRequired(true)),
     async execute(interaction) {
+        const channel = interaction.channel;
         const mentionedUsersIds = interaction.options.getString('users').match(/<@!?(\d+)>/g).map(mention => mention.replace(/[<@!>]/g, ''));
         const mentionedMembers = await interaction.guild.members.fetch({ user: mentionedUsersIds, cache: true });
         const mentionedUsers = mentionedMembers.map(member => member.user);
         let users = [];
         const currency = interaction.options.getInteger('currency');
-        try {
-            for (const user of mentionedUsers) {
-                if (!(await userExists(user))) {
-                    await interaction.channel.send(`Пользователь ${user.toString()} не найден в базе данных.`);
-                    continue;
-                }
-                users.push(user.toString());
-                await addBalance(user, currency);
+        for (const user of mentionedUsers) {
+            if (!(await userExists(user))) {
+                await channel.send(`Пользователь ${user.toString()} не найден в базе данных.`);
+                continue;
             }
+            users.push(user.toString());
+            await addBalance(user, currency);
+        }
+        try {
             await interaction.reply(`Баланс ${users} был изменен на ${currency}.`);
         } catch (error) {
             if (error.code === 10008 || error.code === 10062) {
@@ -39,7 +40,7 @@ module.exports = {
                 }, 5000); // Retry after 5 seconds
             } else {
                 console.error(error);
-                interaction.reply('Произошла ошибка при выполнении команды.');
+                channel.send('Произошла ошибка при выполнении команды.');
             }
         }
     },
