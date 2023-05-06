@@ -16,11 +16,11 @@ module.exports = {
                 .setDescription('The amount of currency to accrue')
                 .setRequired(true)),
     async execute(interaction) {
+        const mentionedUsersIds = interaction.options.getString('users').match(/<@!?(\d+)>/g).map(mention => mention.replace(/[<@!>]/g, ''));
+        const mentionedMembers = await interaction.guild.members.fetch({ user: mentionedUsersIds, cache: true });
+        const mentionedUsers = mentionedMembers.map(member => member.user);
+        let users = [];
         try {
-            const mentionedUsersIds = interaction.options.getString('users').match(/<@!?(\d+)>/g).map(mention => mention.replace(/[<@!>]/g, ''));
-            const mentionedMembers = await interaction.guild.members.fetch({ user: mentionedUsersIds, cache: true });
-            const mentionedUsers = mentionedMembers.map(member => member.user);
-            let users = [];
             const currency = interaction.options.getInteger('currency');
             for (const user of mentionedUsers) {
                 if (!(await userExists(user))) {
