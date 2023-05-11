@@ -1,12 +1,12 @@
 const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-const { removeAchievement } = require('../../scripts/accrue.js');
+const { addAchievement } = require('../../scripts/accrue.js');
 const { userExists } = require('../../scripts/userExists.js');
 const { achievementExists, userHasAchievement } = require('../../scripts/achievementExists.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('remove_achievements')
-        .setDescription("Remove achievement(s) from a user")
+        .setName('add_achievements')
+        .setDescription("Adds achievement to a user")
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addUserOption(option =>
             option.setName('user')
@@ -14,7 +14,7 @@ module.exports = {
                 .setRequired(true))
         .addStringOption(option =>
             option.setName('achievements_index')
-                .setDescription('Index of achievement(s) to remove')
+                .setDescription('Index of achievement(s) to add')
                 .setRequired(true)),
     async execute(interaction) {
         const channel = interaction.channel;
@@ -32,18 +32,18 @@ module.exports = {
                 await channel.send(`Достижение "${achievementId}" не найдено в базе данных.`);
                 continue;
             }
-            if (!(await userHasAchievement(user, achievementId))) {
-                await channel.send(`У пользователя ${user.toString()} нет достижения "${achievementId}".`);
+            if (await userHasAchievement(user, achievementId)) {
+                await channel.send(`У пользователя ${user.toString()} уже есть достижение "${achievementId}".`);
                 continue;
             }
-            achievements.push(await removeAchievement(user, achievementId));
+            achievements.push(await addAchievement(user, achievementId));
         }
         try {
-            await interaction.reply(`У пользователя ${user.toString()} были удалены достижения: "${achievements}".`);
+            await interaction.reply(`Пользователю ${user.toString()} были засчитаны достижения: "${achievements}".`);
         } catch (error) {
             if (error.code === 10008 || error.code === 10062) {
                 // Interaction timed out
-                channel.send(`У пользователя ${user.toString()} были удалены достижения: "${achievements}".`);
+                channel.send(`Пользователю ${user.toString()} были засчитаны достижения: "${achievements}".`);
             } else {
                 console.error(error);
                 channel.send('Произошла ошибка при выполнении команды.');
