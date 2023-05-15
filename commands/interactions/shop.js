@@ -32,6 +32,7 @@ module.exports = {
         const shopNextButton = new ButtonBuilder()
             .setCustomId('shop_next')
             .setLabel('➡')
+            .setDisabled((items.length > 1) ? false : true)
             .setStyle(ButtonStyle.Secondary);
         const confirmButton = new ButtonBuilder()
             .setCustomId('shop_confirm')
