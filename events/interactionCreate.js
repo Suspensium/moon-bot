@@ -19,7 +19,8 @@ module.exports = {
             }
 
             try {
-                console.log(`User "${interaction.member.nickname}" executed "/${interaction.commandName}"`);
+                console.log(interaction);
+                console.log(`User "${interaction.user.toString()}" executed "/${interaction.commandName}"`);
                 await command.execute(interaction);
             } catch (error) {
                 console.error(`Error executing ${interaction.commandName}`);
