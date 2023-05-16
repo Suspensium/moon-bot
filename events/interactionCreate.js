@@ -28,7 +28,7 @@ module.exports = {
         }
 
         if (interaction.isButton()) {
-            console.log(`User "${interaction.user.username}" pressed "/${interaction.customId}" button`);
+            console.log(`User "${interaction.user.username}" pressed "${interaction.customId}" button`);
             if (interaction.channel.locked) {
                 await interaction.reply({ content: 'Поток заблокирован.', ephemeral: true });
                 return;
