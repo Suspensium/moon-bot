@@ -33,71 +33,75 @@ module.exports = {
                 await interaction.reply({ content: 'Поток заблокирован.', ephemeral: true });
                 return;
             }
-            // daily
-            if (interaction.customId === 'daily') {
-                const dailyAccrue = 20;
+            try {
+                // daily
+                if (interaction.customId === 'daily') {
+                    const dailyAccrue = 20;
 
-                if (!(await userExists(interaction.user))) {
-                    await addUser(interaction.user, 1, 0);
-                }
+                    if (!(await userExists(interaction.user))) {
+                        await addUser(interaction.user, 1, 0);
+                    }
 
-                const user = await getUser(interaction.user.id);
+                    const user = await getUser(interaction.user.id);
 
-                const lastClaimedDate = moment(user.lastDaily).tz('Europe/Moscow').format('YYYY-MM-DD');
-                const currentDate = moment().tz('Europe/Moscow').format('YYYY-MM-DD');
+                    const lastClaimedDate = moment(user.lastDaily).tz('Europe/Moscow').format('YYYY-MM-DD');
+                    const currentDate = moment().tz('Europe/Moscow').format('YYYY-MM-DD');
 
-                if (lastClaimedDate === currentDate) {
-                    await interaction.reply({ content: 'Ты уже отмечался сегодня.', ephemeral: true });
+                    if (lastClaimedDate === currentDate) {
+                        await interaction.reply({ content: 'Ты уже отмечался сегодня.', ephemeral: true });
+                        return;
+                    }
+
+                    user.lastDaily = moment().valueOf();
+                    await user.save();
+
+                    let coef = '1';
+                    if (user.level >= 10 && user.level < 25) coef = '1.25'; else if (user.level > 25) coef = '1.5';
+
+                    await addBalance(user, dailyAccrue);
+                    await interaction.reply({ content: `Ты успешно отметился сегодня, получая ${dailyAccrue} x ${coef} мункойнов.`, ephemeral: true });
                     return;
                 }
 
-                user.lastDaily = moment().valueOf();
-                await user.save();
+                // accrue
+                if (interaction.customId === 'accrue') {
+                    if (!(await userExists(interaction.user))) {
+                        await addUser(interaction.user, 1, 0);
+                    }
 
-                let coef = '1';
-                if (user.level >= 10 && user.level < 25) coef = '1.25'; else if (user.level > 25) coef = '1.5';
+                    const clickedButton = await getButton(interaction.message.id);
 
-                await addBalance(user, dailyAccrue);
-                await interaction.reply({ content: `Ты успешно отметился сегодня, получая ${dailyAccrue} x ${coef} мункойнов.`, ephemeral: true });
-                return;
-            }
+                    if (!clickedButton) {
+                        await addButton(interaction.message.id);
+                    }
 
-            // accrue
-            if (interaction.customId === 'accrue') {
-                if (!(await userExists(interaction.user))) {
-                    await addUser(interaction.user, 1, 0);
-                }
+                    if (await getButtonUser(interaction.message.id, interaction.user.id)) {
+                        await interaction.reply({ content: 'Ты уже отметился.', ephemeral: true });
+                        return;
+                    }
+                    await addUserToButton(interaction.message.id, interaction.user.id);
 
-                const clickedButton = await getButton(interaction.message.id);
+                    const level = await getLevel(interaction.user);
+                    let coef = '1';
+                    if (level >= 10 && level < 25) coef = '1.25'; else if (level > 25) coef = '1.5';
 
-                if (!clickedButton) {
-                    await addButton(interaction.message.id);
-                }
-
-                if (await getButtonUser(interaction.message.id, interaction.user.id)) {
-                    await interaction.reply({ content: 'Ты уже отметился.', ephemeral: true });
+                    await addBalance(interaction.user, interaction.message.content);
+                    await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${interaction.message.content} x ${coef} мункойнов.`);
                     return;
                 }
-                await addUserToButton(interaction.message.id, interaction.user.id);
 
-                const level = await getLevel(interaction.user);
-                let coef = '1';
-                if (level >= 10 && level < 25) coef = '1.25'; else if (level > 25) coef = '1.5';
-
-                await addBalance(interaction.user, interaction.message.content);
-                await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${interaction.message.content} x ${coef} мункойнов.`);
-                return;
-            }
-
-            // register
-            if (interaction.customId === 'register') {
-                if (await userExists(interaction.user)) {
-                    await interaction.reply({ content: `Ты уже зарегистрирован.`, ephemeral: true });
+                // register
+                if (interaction.customId === 'register') {
+                    if (await userExists(interaction.user)) {
+                        await interaction.reply({ content: `Ты уже зарегистрирован.`, ephemeral: true });
+                        return;
+                    }
+                    addUser(interaction.user, 1, 0);
+                    await interaction.reply({ content: `Ты успешно зарегистрировался.`, ephemeral: true });
                     return;
                 }
-                addUser(interaction.user, 1, 0);
-                await interaction.reply({ content: `Ты успешно зарегистрировался.`, ephemeral: true });
-                return;
+            } catch (error) {
+                console.error(error);
             }
         }
     },
