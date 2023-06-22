@@ -19,7 +19,7 @@ module.exports = {
         }
 
         const roleButton = new ButtonBuilder()
-            .setCustomId(`role_${inputRole}`)
+            .setCustomId(`role_${role.id}`)
             .setLabel(`Получить роль "${inputRole}"`)
             .setStyle(ButtonStyle.Success);
 

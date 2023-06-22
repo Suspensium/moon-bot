@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, SnowflakeUtil } = require('discord.js');
 const { addBalance } = require('../scripts/accrue.js');
 const { getUser, getLevel } = require('../scripts/getInfo.js');
 const { userExists } = require('../scripts/userExists.js');
@@ -36,9 +36,9 @@ module.exports = {
             try {
                 // role
                 if (interaction.customId.startsWith('role_')) {
-                    const roleName = interaction.customId.replace('role_', '');
+                    const roleId = interaction.customId.replace('role_', '');
                     const guildMember = interaction.member;
-                    const role = interaction.guild.roles.cache.find((r) => r.name === roleName);
+                    const role = interaction.guild.roles.cache.get(roleId);
 
                     if (!role) {
                         return interaction.reply({ content: 'Роль не найдена!', ephemeral: true });
@@ -46,7 +46,7 @@ module.exports = {
 
                     try {
                         await guildMember.roles.add(role);
-                        await interaction.reply({ content: `Роль ${roleName} успешно добавлена.`, ephemeral: true });
+                        await interaction.reply({ content: `Роль "${role.name}" успешно добавлена.`, ephemeral: true });
                     } catch (error) {
                         console.error('Failed to add role:', error);
                         await interaction.reply({ content: 'Произошла ошибка в выполнении команды.', ephemeral: true });
