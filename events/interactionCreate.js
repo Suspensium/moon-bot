@@ -22,8 +22,7 @@ module.exports = {
                 console.log(`User "${interaction.user.username}" executed "/${interaction.commandName}"`);
                 await command.execute(interaction);
             } catch (error) {
-                console.error(`Error executing ${interaction.commandName}`);
-                console.error(error);
+                console.error(`Error executing ${interaction.commandName}:\n`, error);
             }
         }
 
@@ -33,6 +32,7 @@ module.exports = {
                 await interaction.reply({ content: 'Поток заблокирован.', ephemeral: true });
                 return;
             }
+
             // role
             if (interaction.customId.startsWith('role_')) {
                 const roleId = interaction.customId.replace('role_', '');
@@ -46,11 +46,11 @@ module.exports = {
                 try {
                     await interaction.member.roles.add(role);
                     await interaction.reply({ content: `Роль "${role.name}" успешно добавлена.`, ephemeral: true });
-                    return;
                 } catch (error) {
-                    console.error('Failed to add role:', error);
+                    console.error('Failed to add role:\n', error);
                     await interaction.reply({ content: 'Произошла ошибка в выполнении команды.', ephemeral: true });
                 }
+                return;
             }
 
             // daily
@@ -62,7 +62,6 @@ module.exports = {
                 }
 
                 const user = await getUser(interaction.user.id);
-
                 const lastClaimedDate = moment(user.lastDaily).tz('Europe/Moscow').format('YYYY-MM-DD');
                 const currentDate = moment().tz('Europe/Moscow').format('YYYY-MM-DD');
 
@@ -78,7 +77,11 @@ module.exports = {
                 if (user.level >= 10 && user.level < 25) coef = '1.25'; else if (user.level > 25) coef = '1.5';
 
                 await addBalance(user, dailyAccrue);
-                await interaction.reply({ content: `Ты успешно отметился сегодня, получая ${dailyAccrue} x ${coef} мункойнов.`, ephemeral: true });
+                try {
+                    await interaction.reply({ content: `Ты успешно отметился сегодня, получая ${dailyAccrue} x ${coef} мункойнов.`, ephemeral: true });
+                } catch (error) {
+                    console.error('Failed to add daily currency:\n', error);
+                }
                 return;
             }
 
@@ -100,6 +103,7 @@ module.exports = {
                     await interaction.reply({ content: 'Ты уже отметился.', ephemeral: true });
                     return;
                 }
+
                 await addUserToButton(interaction.message.id, interaction.user.id);
 
                 const level = await getLevel(interaction.user);
@@ -107,7 +111,11 @@ module.exports = {
                 if (level >= 10 && level < 25) coef = '1.25'; else if (level > 25) coef = '1.5';
 
                 await addBalance(interaction.user, currency);
-                await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${currency} x ${coef} мункойнов.`);
+                try {
+                    await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${currency} x ${coef} мункойнов.`);
+                } catch (error) {
+                    console.error('Failed to accrue:\n', error);
+                }
                 return;
             }
 
@@ -117,8 +125,14 @@ module.exports = {
                     await interaction.reply({ content: `Ты уже зарегистрирован.`, ephemeral: true });
                     return;
                 }
-                addUser(interaction.user, 1, 0);
-                await interaction.reply({ content: `Ты успешно зарегистрировался.`, ephemeral: true });
+
+                await addUser(interaction.user, 1, 0);
+
+                try {
+                    await interaction.reply({ content: `Ты успешно зарегистрировался.`, ephemeral: true });
+                } catch (error) {
+                    console.error('Failed to register:\n', error);
+                }
                 return;
             }
         }
