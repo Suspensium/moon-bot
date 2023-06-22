@@ -13,13 +13,13 @@ module.exports = {
         const currency = interaction.options.getInteger('currency');
 
         const accrueButton = new ButtonBuilder()
-            .setCustomId('accrue')
+            .setCustomId(`accrue_${currency}`)
             .setLabel('Присутствовал на РТ')
             .setStyle(ButtonStyle.Success);
 
         const row = new ActionRowBuilder()
             .addComponents(accrueButton);
 
-        await interaction.reply({ content: `${currency}`, components: [row] });
+        await interaction.reply({ components: [row] });
     },
 };

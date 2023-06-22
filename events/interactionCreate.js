@@ -34,6 +34,25 @@ module.exports = {
                 return;
             }
             try {
+                // role
+                if (interaction.customId.startsWith('role_')) {
+                    const roleName = interaction.customId.replace('role_', '');
+                    const guildMember = interaction.member;
+                    const role = interaction.guild.roles.cache.find((r) => r.name === roleName);
+
+                    if (!role) {
+                        return interaction.reply({ content: 'Роль не найдена!', ephemeral: true });
+                    }
+
+                    try {
+                        await guildMember.roles.add(role);
+                        await interaction.reply({ content: `Роль ${roleName} успешно добавлена.`, ephemeral: true });
+                    } catch (error) {
+                        console.error('Failed to add role:', error);
+                        await interaction.reply({ content: 'Произошла ошибка в выполнении команды.', ephemeral: true });
+                    }
+                }
+
                 // daily
                 if (interaction.customId === 'daily') {
                     const dailyAccrue = 20;
@@ -64,7 +83,9 @@ module.exports = {
                 }
 
                 // accrue
-                if (interaction.customId === 'accrue') {
+                if (interaction.customId.startsWith('accrue_')) {
+                    const currency = interaction.customId.replace('accrue_', '');
+
                     if (!(await userExists(interaction.user))) {
                         await addUser(interaction.user, 1, 0);
                     }
@@ -85,8 +106,8 @@ module.exports = {
                     let coef = '1';
                     if (level >= 10 && level < 25) coef = '1.25'; else if (level > 25) coef = '1.5';
 
-                    await addBalance(interaction.user, interaction.message.content);
-                    await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${interaction.message.content} x ${coef} мункойнов.`);
+                    await addBalance(interaction.user, currency);
+                    await interaction.reply(`${interaction.user.toString()} подтвердил присутствие на РТ, получая ${currency} x ${coef} мункойнов.`);
                     return;
                 }
 
