@@ -56,7 +56,6 @@ module.exports = {
             // daily
             if (interaction.customId === 'daily') {
                 const dailyAccrue = 20;
-
                 if (!(await userExists(interaction.user))) {
                     await addUser(interaction.user, 1, 0);
                 }
@@ -66,7 +65,11 @@ module.exports = {
                 const currentDate = moment().tz('Europe/Moscow').format('YYYY-MM-DD');
 
                 if (lastClaimedDate === currentDate) {
-                    await interaction.reply({ content: 'Ты уже отмечался сегодня.', ephemeral: true });
+                    try {
+                        await interaction.reply({ content: 'Ты уже отмечался сегодня.', ephemeral: true });
+                    } catch (error) {
+                    console.error('Failed to add daily currency:\n', error);
+                }
                     return;
                 }
 
