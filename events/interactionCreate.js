@@ -61,7 +61,7 @@ module.exports = {
                 }
 
                 const user = await getUser(interaction.user.id);
-                const lastClaimedDate = moment(user.lastDaily).tz('Europe/Moscow').format('YYYY-MM-DD');
+                const lastClaimedDate = user.lastDaily ? moment(user.lastDaily).tz('Europe/Moscow').format('YYYY-MM-DD') : null;
                 const currentDate = moment().tz('Europe/Moscow').format('YYYY-MM-DD');
 
                 if (lastClaimedDate === currentDate) {
