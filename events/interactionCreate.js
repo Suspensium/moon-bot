@@ -1,4 +1,4 @@
-const { Events, SnowflakeUtil } = require('discord.js');
+const { Events } = require('discord.js');
 const { addBalance } = require('../scripts/accrue.js');
 const { getUser, getLevel } = require('../scripts/getInfo.js');
 const { userExists } = require('../scripts/userExists.js');
