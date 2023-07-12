@@ -19,7 +19,6 @@ module.exports = {
             }
 
             try {
-                console.log(`User "${interaction.user.username}" executed "/${interaction.commandName}"`);
                 await command.execute(interaction);
             } catch (error) {
                 console.error(`Error executing ${interaction.commandName}:\n`, error);
@@ -27,7 +26,6 @@ module.exports = {
         }
 
         if (interaction.isButton()) {
-            console.log(`User "${interaction.user.username}" pressed "${interaction.customId}" button`);
             if (interaction.channel.locked) {
                 await interaction.reply({ content: 'Поток заблокирован.', ephemeral: true });
                 return;
